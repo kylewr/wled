@@ -7235,8 +7235,8 @@ static const char _data_FX_MODE_BLURZ[] PROGMEM = "Blurz@Fade rate,Blur;!,Color 
 /////////////////////////
 //   ** Quack Party     //
 /////////////////////////
-uint16_t mode_quack_party(void) {                // Quack Party - high energy audio reactive with palette support
-  if (SEGLEN <= 1) return mode_static();
+void mode_quack_party(void) {                // Quack Party - high energy audio reactive with palette support
+  if (SEGLEN <= 1) FX_FALLBACK_STATIC;
   
   um_data_t *um_data = getAudioData();
   uint8_t *fftResult = (uint8_t*)um_data->u_data[2];
@@ -7302,13 +7302,11 @@ uint16_t mode_quack_party(void) {                // Quack Party - high energy au
     
     // Add sparkle on mid-range frequencies
     uint8_t midRange = (fftResult[4] + fftResult[5] + fftResult[6]) / 3;
-    if (midRange > 120 && random8() < 100) {
-      uint16_t sparklePos = random16(SEGLEN);
+    if (midRange > 120 && random(0, 255) < 100) {
+      uint16_t sparklePos = random(0, SEGLEN);
       SEGMENT.setPixelColor(sparklePos, 0xFFFFFF);
     }
   }
-  
-  return FRAMETIME;
 } // mode_quack_party()
 static const char _data_FX_MODE_QUACK_PARTY[] PROGMEM = "Quack Party@Speed,Chase size;!,!,!;!;1f;m12=2,si=0"; // Party mode with palette support
 
