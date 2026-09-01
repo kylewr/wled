@@ -144,6 +144,10 @@ uint32_t ColorFromPalette(const CRGBPalette16& pal, unsigned index, uint8_t brig
   return RGBW32(red1,green1,blue1,0);
 }
 
+// Runtime state private to this file - previously WLED_GLOBAL, a leftover from
+// when all state lived in one big extern block regardless of who used it.
+static byte lastRandomIndex = 0; // used to save last random color so the new one is not the same
+
 void setRandomColor(byte* rgb)
 {
   lastRandomIndex = get_random_wheel_index(lastRandomIndex);
@@ -310,6 +314,15 @@ void loadCustomPalettes() {
       if (emptyPaletteGap > WLED_MAX_CUSTOM_PALETTE_GAP) break; // stop looking for more palettes
     }
   }
+}
+
+size_t removeUsermodPalettes(const char *name) {
+  size_t before = usermodPalettes.size();
+  for (int i = usermodPalettes.size() - 1; i >= 0; i--) {
+    if (usermodPalettes[i].name == name)
+      usermodPalettes.erase(usermodPalettes.begin() + i);
+  }
+  return before - usermodPalettes.size();
 }
 
 // convert HSV (16bit hue) to RGB (32bit with white = 0), optimized for speed
