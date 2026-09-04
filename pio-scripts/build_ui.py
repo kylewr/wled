@@ -1,5 +1,6 @@
 Import("env")
 import os
+import re
 import shutil
 import subprocess
 from SCons.Script import COMMAND_LINE_TARGETS
@@ -27,7 +28,13 @@ if "__idedata" not in COMMAND_LINE_TARGETS:
             exit(exitCode)
 
     # Call the bundling script without SCons' command executor.
-    exitCode = subprocess.call([npm_ex, "run", "build"], cwd=project_dir)
+    ui_env = os.environ.copy()
+    # Pass the target-specific banner option to the Node UI generator.
+    # This avoids sharing a no-banner UI bundle with builds that do not opt out.
+    target_flags = env.GetProjectConfig().get("env:" + env["PIOENV"], "build_flags")
+    if any(re.match(r"^\s*-D\s*NO_DEV_BANNER(?:\s|$)", flag) for flag in target_flags):
+        ui_env["WLED_NO_DEV_BANNER"] = "1"
+    exitCode = subprocess.call([npm_ex, "run", "build"], cwd=project_dir, env=ui_env)
     if exitCode:
         print('\x1b[0;31;43m' + 'npm run build failed; check https://kno.wled.ge/advanced/compiling-wled/' + '\x1b[0m')
         exit(exitCode)

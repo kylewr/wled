@@ -5,6 +5,7 @@ var loc = false, locip, locproto = "http:";
 // Pages can opt out (e.g. because their layout assumes the viewport starts at y=0)
 // by setting `window.__noDevBanner = true` before common.js loads.
 // Skipped inside iframes since the embedding page already shows its own banner.
+// DEV_BANNER_START
 (function devBanner() {
 	if (window.__noDevBanner) return;
 	try { if (window.self !== window.top) return; } catch (e) { return; } // cross-origin iframe, be safe and skip
@@ -27,6 +28,7 @@ var loc = false, locip, locproto = "http:";
 	if (d.readyState === 'loading') d.addEventListener('DOMContentLoaded', add);
 	else add();
 })();
+// DEV_BANNER_END
 
 function H(pg="")   { window.open("https://kno.wled.ge/"+pg); }
 function GH()       { window.open("https://github.com/wled-dev/WLED"); }
