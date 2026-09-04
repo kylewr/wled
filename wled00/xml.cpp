@@ -424,6 +424,20 @@ void getSettingsJS(byte subPage, Print& settingsScript)
       printSetFormValue(settingsScript,hs,bus->getCustomText().c_str());
       sumMa += bus->getMaxCurrent();
     }
+#ifdef WLED_LOCKED_LED_PINS
+    // Product-reserved output pins cannot be changed in the UI.
+    static constexpr uint8_t lockedLedPins[] = { WLED_LOCKED_LED_PINS };
+#ifdef WLED_HIDDEN_STATUS_LED_PINS
+    settingsScript.print(F("hideStatusLedPins(["));
+#else
+    settingsScript.print(F("lockLedPins(["));
+#endif
+    for (uint8_t pin : lockedLedPins) settingsScript.printf_P(PSTR("%u,"), pin);
+    settingsScript.print(F("]);"));
+#endif
+#ifdef WLED_LOCKED_LED_BUS_COUNT
+    settingsScript.printf_P(PSTR("lockLedBusCount(%u);"), WLED_LOCKED_LED_BUS_COUNT);
+#endif
     printSetFormValue(settingsScript,PSTR("MA"),BusManager::ablMilliampsMax() ? BusManager::ablMilliampsMax() : sumMa);
     printSetFormCheckbox(settingsScript,PSTR("ABL"),BusManager::ablMilliampsMax() || sumMa > 0);
     printSetFormCheckbox(settingsScript,PSTR("PPL"),!BusManager::ablMilliampsMax() && sumMa > 0);

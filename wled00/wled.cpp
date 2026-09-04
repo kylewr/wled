@@ -1118,11 +1118,11 @@ void WLED::handleStatusLED()
   static um_data_t *um_data;
 
   if (!WLEDNetwork.isConnected()) {
-    c = RGBW32(0,255,0,0);
+    c = RGBW32(50,0,0,0);
     ledStatusType = 2;
   } else if (apActive) {
-    c = RGBW32(0,0,255,0);
-    ledStatusType = 1;
+    c = RGBW32(0,0,50,0);
+    ledStatusType = 10;
   }
   // else if (UsermodManager::getUMData(&um_data, USERMOD_ID_AUDIOREACTIVE)) {
   //   ledStatusType = 10;
